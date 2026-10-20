@@ -1,0 +1,55 @@
+services:
+  backend:
+    build: ./backend
+    restart: unless-stopped
+    environment:
+      PORT: 3001
+      JWT_SECRET: ${JWT_SECRET}
+      CORS_ORIGIN: ${CORS_ORIGIN:-}
+      ENCRYPTION_KEY: ${ENCRYPTION_KEY}
+      NODE_ENV: production
+      ADMIN_EMAIL: ${ADMIN_EMAIL}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD}
+      SMTP_HOST: ${SMTP_HOST}
+      SMTP_PORT: ${SMTP_PORT}
+      SMTP_USER: ${SMTP_USER}
+      SMTP_PASS: ${SMTP_PASS}
+      MAIL_FROM: ${MAIL_FROM}
+    volumes:
+      - ./backend/data:/app/data
+      - ./backend/uploads:/app/uploads
+    expose:
+      - "3001"
+
+  frontend:
+    build: ./frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    environment:
+      SERVER_NAME: ${SERVER_NAME:-logistics.example.ru}
+      CERT_DIR: ${CERT_DIR:-/etc/letsencrypt/live/logistics.example.ru}
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /etc/letsencrypt:/etc/letsencrypt:ro
+      - prerendered:/usr/share/nginx/html/prerendered:ro
+
+  prerender:
+    image: node:20-alpine
+    restart: "no"
+    depends_on:
+      - backend
+      - frontend
+    environment:
+      API_BASE: http://backend:3001
+      SHELL_BASE: https://${SERVER_NAME:-logistics.example.ru}
+      SITE_URL: https://${SERVER_NAME:-logistics.example.ru}
+      OUT_DIR: /out
+    volumes:
+      - ./frontend/scripts:/scripts:ro
+      - prerendered:/out
+
+volumes:
+  prerendered:

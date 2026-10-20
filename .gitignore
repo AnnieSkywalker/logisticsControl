@@ -1,0 +1,9 @@
+node_modules/
+dist/
+.env
+*.sqlite
+uploads/*
+!uploads/.gitkeep
+temp-credentials-*.txt
+temp-2fa-*.txt
+temp-*.txt
