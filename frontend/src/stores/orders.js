@@ -13,24 +13,37 @@ export const useOrdersStore = defineStore("orders", {
   state: () => ({
     items: [],
     total: 0,
+    page: 1,
+    limit: 10,
     loading: false,
     filters: {},
   }),
+  getters: {
+    totalPages: (state) => Math.max(1, Math.ceil(state.total / state.limit)),
+  },
   actions: {
     async create(payload) {
       const { data } = await client.post("/orders", payload);
       return data;
     },
-    async fetch(filters = this.filters) {
+    async fetch(filters = this.filters, opts = {}) {
       this.filters = { ...filters };
+      if (opts.page !== undefined) this.page = opts.page;
+      if (opts.limit !== undefined) this.limit = opts.limit;
       this.loading = true;
       try {
-        const { data } = await client.get("/orders", { params: cleanFilters(this.filters) });
+        const { data } = await client.get("/orders", {
+          params: { ...cleanFilters(this.filters), page: this.page, limit: this.limit },
+        });
         this.items = data.items;
         this.total = data.total;
       } finally {
         this.loading = false;
       }
+    },
+    goToPage(page) {
+      const target = Math.min(Math.max(1, page), this.totalPages);
+      if (target !== this.page) this.fetch(this.filters, { page: target });
     },
     async update(id, payload) {
       await client.put(`/orders/${id}`, payload);

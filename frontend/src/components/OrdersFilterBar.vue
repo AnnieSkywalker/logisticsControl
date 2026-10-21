@@ -61,11 +61,11 @@ onMounted(() => {
 });
 
 function apply() {
-  orders.fetch({ ...local });
+  orders.fetch({ ...local }, { page: 1 });
 }
 
 function reset() {
   Object.assign(local, { vehicle_id: "", legal_entity_id: "", date: "", date_from: "", date_to: "" });
-  orders.fetch({});
+  orders.fetch({}, { page: 1 });
 }
 </script>

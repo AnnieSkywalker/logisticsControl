@@ -37,7 +37,26 @@
 
       <div v-show="tab === 'orders'" class="space-y-4">
         <OrdersFilterBar />
-        <OrdersTable @edit="openEdit" />
+
+        <div class="flex gap-2">
+          <button
+            class="px-3 py-1.5 rounded-lg text-sm transition-colors"
+            :class="view === 'table' ? 'bg-turquoise text-white' : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-100'"
+            @click="setView('table')"
+          >
+            Таблица
+          </button>
+          <button
+            class="px-3 py-1.5 rounded-lg text-sm transition-colors"
+            :class="view === 'cards' ? 'bg-turquoise text-white' : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-100'"
+            @click="setView('cards')"
+          >
+            Плашки
+          </button>
+        </div>
+
+        <OrdersTable v-if="view === 'table'" @edit="openEdit" />
+        <OrdersCards v-else @edit="openEdit" />
       </div>
 
       <DictionariesManager v-show="tab === 'dict'" />
@@ -56,6 +75,7 @@ import { useDictionariesStore } from "@/stores/dictionaries.js";
 import AppButton from "@/components/ui/AppButton.vue";
 import OrdersFilterBar from "@/components/OrdersFilterBar.vue";
 import OrdersTable from "@/components/OrdersTable.vue";
+import OrdersCards from "@/components/OrdersCards.vue";
 import OrderEditModal from "@/components/OrderEditModal.vue";
 import DictionariesManager from "@/components/DictionariesManager.vue";
 
@@ -65,13 +85,19 @@ const orders = useOrdersStore();
 const dict = useDictionariesStore();
 
 const tab = ref("orders");
+const view = ref("table");
 const showEdit = ref(false);
 const editing = ref(null);
 
 onMounted(() => {
   dict.fetchAll();
-  orders.fetch({});
+  orders.fetch({}, { page: 1, limit: 200 });
 });
+
+function setView(v) {
+  view.value = v;
+  orders.fetch(orders.filters, { page: 1, limit: v === "cards" ? 10 : 200 });
+}
 
 function openEdit(order) {
   editing.value = order;
