@@ -9,6 +9,8 @@ import { setupSwagger } from "./swagger/swagger.js";
 
 import authRoutes from "./routes/auth.routes.js";
 import settingsRoutes from "./routes/settings.routes.js";
+import dictionariesRoutes from "./routes/dictionaries.routes.js";
+import ordersRoutes from "./routes/orders.routes.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -37,6 +39,8 @@ app.use("/uploads", express.static(path.join(__dirname, "..", "uploads")));
 
 app.use("/api/auth", authRoutes);
 app.use("/api/settings", settingsRoutes);
+app.use("/api/dictionaries", dictionariesRoutes);
+app.use("/api/orders", ordersRoutes);
 
 app.use(errorHandler);
 setupSwagger(app);
