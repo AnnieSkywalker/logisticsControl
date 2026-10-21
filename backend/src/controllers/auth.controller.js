@@ -43,6 +43,12 @@ async function issueTokens(user) {
   };
 }
 
+function is2faDisabled() {
+  if (process.env.DISABLE_2FA === "true") return true;
+  if (process.env.DISABLE_2FA === "false") return false;
+  return process.env.NODE_ENV !== "production";
+}
+
 function generateCode() {
   return String(crypto.randomInt(0, 10000)).padStart(4, "0");
 }
@@ -76,6 +82,10 @@ export async function login(req, res, next) {
     const user = await db("users").where({ email }).first();
     if (!user || !(await bcrypt.compare(password, user.password_hash))) {
       return res.status(401).json({ error: "Неверный email или пароль" });
+    }
+
+    if (is2faDisabled()) {
+      return res.json(await issueTokens(user));
     }
 
     const code = generateCode();

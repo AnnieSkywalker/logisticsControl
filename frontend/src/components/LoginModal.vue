@@ -62,6 +62,7 @@
 
 <script setup>
 import { ref, computed, watch, onUnmounted } from "vue";
+import { useRouter } from "vue-router";
 import { useAuthStore } from "@/stores/auth.js";
 import { useToast } from "vue-toastification";
 import AppModal from "@/components/ui/AppModal.vue";
@@ -72,6 +73,7 @@ const props = defineProps({ show: { type: Boolean, default: false } });
 const emit = defineEmits(["close"]);
 
 const auth = useAuthStore();
+const router = useRouter();
 
 const step = ref("email");
 const email = ref("");
@@ -165,5 +167,6 @@ function startCooldown() {
 
 function finish() {
   emit("close");
+  router.push("/admin");
 }
 </script>
