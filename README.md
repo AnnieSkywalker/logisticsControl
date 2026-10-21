@@ -30,6 +30,11 @@ npm run dev                   # http://localhost:3001
 - API: http://localhost:3001
 - Swagger: http://localhost:3001/api/docs
 
+> **Важно про `.env`.** Локальному backend нужен **свой** файл `backend/.env`
+> (dotenv читает `.env` из рабочей папки запуска). Корневой `.env` в корне проекта
+> используется только Docker Compose и для `npm run dev` в `backend/` не читается.
+> Если удобнее держать настройки в одном месте — скопируй корневой: `cp ../.env .env`.
+
 ### 2. Frontend (терминал №2)
 
 ```bash
