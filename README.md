@@ -11,8 +11,20 @@
 
 ## Требования
 
-- Node.js 20+ и npm — для локальной разработки
+- Node.js 20+ и npm — для локальной разработки (в репозитории есть `.nvmrc`)
 - Docker и Docker Compose — для деплоя
+
+> **Версия Node важна.** Проект требует Node 20. Если установлена другая версия,
+> `better-sqlite3` может не запуститься (`NODE_MODULE_VERSION` mismatch).
+> Проще всего использовать nvm:
+>
+> ```bash
+> curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
+> nvm install 20
+> nvm use            # подхватит версию из .nvmrc
+> ```
+>
+> После смены версии Node переустанови зависимости: `npm install`.
 
 ## Локальный запуск
 
