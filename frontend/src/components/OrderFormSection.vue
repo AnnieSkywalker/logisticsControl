@@ -71,7 +71,7 @@
 </template>
 
 <script setup>
-import { reactive, ref, onMounted } from "vue";
+import { reactive, ref, computed, onMounted } from "vue";
 import { useToast } from "vue-toastification";
 import { useDictionariesStore } from "@/stores/dictionaries.js";
 import { useOrdersStore } from "@/stores/orders.js";
@@ -101,8 +101,9 @@ function nameOptions(type, field = "name") {
   return dict.active(type).map((item) => ({ value: item.id, label: item[field] }));
 }
 
-const volumeOptions = () =>
-  dict.active("volumes").map((v) => ({ value: v.id, label: `${v.value} ${v.unit || "т"}` }));
+const volumeOptions = computed(() =>
+  dict.active("volumes").map((v) => ({ value: v.id, label: `${v.value} ${v.unit || "т"}` }))
+);
 
 onMounted(() => {
   dict.fetchAll();

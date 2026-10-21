@@ -31,7 +31,7 @@
 </template>
 
 <script setup>
-import { reactive, ref, watch } from "vue";
+import { reactive, ref, computed, watch } from "vue";
 import { useDictionariesStore } from "@/stores/dictionaries.js";
 import { useOrdersStore } from "@/stores/orders.js";
 import AppModal from "@/components/ui/AppModal.vue";
@@ -64,8 +64,9 @@ const form = reactive({
 function nameOptions(type, field = "name") {
   return dict.active(type).map((item) => ({ value: item.id, label: item[field] }));
 }
-const volumeOptions = () =>
-  dict.active("volumes").map((v) => ({ value: v.id, label: `${v.value} ${v.unit || "т"}` }));
+const volumeOptions = computed(() =>
+  dict.active("volumes").map((v) => ({ value: v.id, label: `${v.value} ${v.unit || "т"}` }))
+);
 
 watch(
   () => props.order,
